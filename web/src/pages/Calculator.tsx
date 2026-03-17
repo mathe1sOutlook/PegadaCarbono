@@ -60,6 +60,47 @@ const PRESETS: Record<string, {
   '35 MPa': { cement: 377, sand: 735, gravel: 1005, water: 189 },
 };
 
+// ---------------------------------------------------------------------------
+// Helpers de UI (fora do componente para evitar perda de foco)
+// ---------------------------------------------------------------------------
+const inputClass =
+  'w-full rounded-lg border border-teal-300 bg-white px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400';
+
+const labelClass = 'block text-sm font-medium text-teal-800 mb-1';
+
+function NumberInput({
+  label,
+  value,
+  onChange,
+  unit,
+  step,
+  min,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+  unit?: string;
+  step?: number;
+  min?: number;
+}) {
+  return (
+    <div>
+      <label className={labelClass}>
+        {label} {unit && <span className="text-teal-500">({unit})</span>}
+      </label>
+      <input
+        type="number"
+        className={inputClass}
+        value={value}
+        step={step ?? 1}
+        min={min ?? 0}
+        onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+        onFocus={(e) => e.target.select()}
+      />
+    </div>
+  );
+}
+
 // Cores para gráficos
 const CHART_COLORS = [
   '#059669', // emerald-600
@@ -239,43 +280,6 @@ export default function Calculator() {
     return steps;
   }, [results]);
 
-  // ---------------------------------------------------------------------------
-  // Helpers de UI
-  // ---------------------------------------------------------------------------
-  const inputClass =
-    'w-full rounded-lg border border-teal-300 bg-white px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400';
-
-  const labelClass = 'block text-sm font-medium text-teal-800 mb-1';
-
-  const NumberInput = ({
-    label,
-    value,
-    onChange,
-    unit,
-    step,
-    min,
-  }: {
-    label: string;
-    value: number;
-    onChange: (v: number) => void;
-    unit?: string;
-    step?: number;
-    min?: number;
-  }) => (
-    <div>
-      <label className={labelClass}>
-        {label} {unit && <span className="text-teal-500">({unit})</span>}
-      </label>
-      <input
-        type="number"
-        className={inputClass}
-        value={value}
-        step={step ?? 1}
-        min={min ?? 0}
-        onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-      />
-    </div>
-  );
 
   // ---------------------------------------------------------------------------
   // Render

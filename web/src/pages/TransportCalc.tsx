@@ -181,6 +181,7 @@ export default function TransportCalc() {
               step={0.1}
               value={mass}
               onChange={(e) => setMass(Math.max(0, parseFloat(e.target.value) || 0))}
+              onFocus={(e) => e.target.select()}
               className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition"
             />
           </div>
@@ -196,6 +197,7 @@ export default function TransportCalc() {
               step={1}
               value={distance}
               onChange={(e) => setDistance(Math.max(0, parseFloat(e.target.value) || 0))}
+              onFocus={(e) => e.target.select()}
               className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition"
             />
           </div>
@@ -324,6 +326,7 @@ export default function TransportCalc() {
               step={1}
               value={tripsPerMonth}
               onChange={(e) => setTripsPerMonth(Math.max(1, parseInt(e.target.value) || 1))}
+              onFocus={(e) => e.target.select()}
               className="w-full rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition"
             />
           </div>

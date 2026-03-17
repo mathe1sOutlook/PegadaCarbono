@@ -250,6 +250,7 @@ export default function StructureCalc() {
                   min={1}
                   value={builtArea}
                   onChange={(e) => setBuiltArea(Number(e.target.value))}
+                  onFocus={(e) => e.target.select()}
                   className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-800 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition"
                 />
               </div>
@@ -263,6 +264,7 @@ export default function StructureCalc() {
                   min={1}
                   value={floors}
                   onChange={(e) => setFloors(Number(e.target.value))}
+                  onFocus={(e) => e.target.select()}
                   className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-800 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition"
                 />
               </div>
@@ -310,6 +312,7 @@ export default function StructureCalc() {
                         onChange={(e) =>
                           updateElement(idx, 'concrete', Number(e.target.value))
                         }
+                        onFocus={(e) => e.target.select()}
                         className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition"
                       />
                     </div>
@@ -324,6 +327,7 @@ export default function StructureCalc() {
                         onChange={(e) =>
                           updateElement(idx, 'steel', Number(e.target.value))
                         }
+                        onFocus={(e) => e.target.select()}
                         className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 outline-none transition"
                       />
                     </div>
