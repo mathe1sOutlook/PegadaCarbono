@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:app_CO2.ViewModels"
+             xmlns:controls="clr-namespace:app_CO2.Views.Controls"
+             x:Class="app_CO2.Views.FormworkCalculatorPage"
+             x:DataType="vm:FormworkCalculatorViewModel"
+             xmlns:converters="clr-namespace:app_CO2.Converters"
+             Title="Fôrmas">
+
+    <ContentPage.Resources>
+        <converters:EnumToStringConverter x:Key="EnumToString" />
+    </ContentPage.Resources>
+
+    <Grid ColumnDefinitions="7*,3*" ColumnSpacing="16" Padding="20">
+
+        <ScrollView Grid.Column="0">
+            <VerticalStackLayout Spacing="16">
+
+                <Label Text="Calculadora de Fôrmas" Style="{StaticResource Title1}" />
+                <Label Text="Calcula a emissão de CO₂ das fôrmas com base no material, área e reutilizações." Style="{StaticResource Body}" Opacity="0.7" />
+
+                <Border Style="{StaticResource CardStyle}" Padding="20">
+                    <VerticalStackLayout Spacing="16">
+                        <Label Text="Material da Fôrma" Style="{StaticResource Subtitle2}" />
+                        <Picker ItemsSource="{Binding Materials}" SelectedItem="{Binding SelectedMaterial}" Title="Selecione o material"
+                                ItemDisplayBinding="{Binding ., Converter={StaticResource EnumToString}}" />
+
+                        <Label Text="Área (m²)" Style="{StaticResource Subtitle2}" />
+                        <Entry Text="{Binding Area}" Keyboard="Numeric" Placeholder="Ex: 250" />
+
+                        <Label Text="Reutilizações" Style="{StaticResource Subtitle2}" />
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <Slider Minimum="1" Maximum="50" Value="{Binding Reuses}" />
+                            <Label Grid.Column="1" Text="{Binding Reuses}" Style="{StaticResource Subtitle1}" WidthRequest="40" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                            <Button Text="Calcular" Command="{Binding CalculateCommand}" Style="{StaticResource PrimaryAction}" />
+                            <Button Grid.Column="1" Text="Limpar" Command="{Binding ClearCommand}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                                    TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <controls:EmissionResultCard BindingContext="{Binding .}" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <controls:HistoryPanel Grid.Column="1" BindingContext="{Binding HistoryPanel}" />
+
+    </Grid>
+</ContentPage>

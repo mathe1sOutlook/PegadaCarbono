@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:app_CO2.ViewModels"
+             xmlns:reporting="clr-namespace:CoreCO2.Reporting;assembly=CoreCO2"
+             xmlns:coreModels="clr-namespace:CoreCO2.Models;assembly=CoreCO2"
+             xmlns:oxy="clr-namespace:OxyPlot.Maui.Skia;assembly=OxyPlot.Maui.Skia"
+             xmlns:controls="clr-namespace:app_CO2.Views.Controls"
+             x:Class="app_CO2.Views.BuildingReportPage"
+             x:DataType="vm:BuildingReportViewModel"
+             Title="Relatório">
+
+    <Grid Padding="20">
+        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
+                           HorizontalOptions="Center" VerticalOptions="Center" Color="{StaticResource Primary}" />
+
+        <ScrollView IsVisible="{Binding IsLoading, Converter={StaticResource InvertBoolConverter}}">
+            <VerticalStackLayout Spacing="16">
+
+                <Label Text="{Binding Report.BuildingName, StringFormat='Relatório: {0}'}" Style="{StaticResource Title1}" />
+
+                <!-- Total Emissions Card -->
+                <Border Style="{StaticResource CardStyle}" Padding="24">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Emissão Total" Style="{StaticResource Title3}" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="20">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Mínimo" Style="{StaticResource Caption1}" Opacity="0.6" />
+                                <Label Style="{StaticResource NumericLarge}" TextColor="{StaticResource EmissionLow}"
+                                       Text="{Binding Report.TotalMinKgCO2PerM2, StringFormat='{0:N1}'}" />
+                                <Label Text="kgCO₂/m²" Style="{StaticResource Caption2}" Opacity="0.5" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                <Label Text="Máximo" Style="{StaticResource Caption1}" Opacity="0.6" />
+                                <Label Style="{StaticResource NumericLarge}" TextColor="{StaticResource EmissionHigh}"
+                                       Text="{Binding Report.TotalMaxKgCO2PerM2, StringFormat='{0:N1}'}" />
+                                <Label Text="kgCO₂/m²" Style="{StaticResource Caption2}" Opacity="0.5" />
+                            </VerticalStackLayout>
+                        </Grid>
+                        <BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="20">
+                            <Label Style="{StaticResource Body}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Total absoluto: " FontAttributes="Bold" />
+                                        <Span Text="{Binding Report.TotalMinKgCO2, StringFormat='{0:N0}'}" />
+                                        <Span Text=" – " />
+                                        <Span Text="{Binding Report.TotalMaxKgCO2, StringFormat='{0:N0}'}" />
+                                        <Span Text=" kgCO₂" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                            <Label Grid.Column="1" Style="{StaticResource Body}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Área total: " FontAttributes="Bold" />
+                                        <Span Text="{Binding Report.TotalAreaM2, StringFormat='{0:N0}'}" />
+                                        <Span Text=" m²" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Lifecycle Breakdown — table + chart side by side -->
+                <Label Text="Desdobramento por Módulo" Style="{StaticResource Title3}" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <Border Style="{StaticResource CardStyle}" Padding="16">
+                        <Grid ColumnDefinitions="2*,*,*,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="8">
+                            <Label Text="Módulo" Style="{StaticResource Subtitle2}" />
+                            <Label Grid.Column="1" Text="Mín (kgCO₂/m²)" Style="{StaticResource Subtitle2}" HorizontalTextAlignment="End" />
+                            <Label Grid.Column="2" Text="Máx (kgCO₂/m²)" Style="{StaticResource Subtitle2}" HorizontalTextAlignment="End" />
+                            <Label Grid.Column="3" Text="% Total" Style="{StaticResource Subtitle2}" HorizontalTextAlignment="End" />
+
+                            <Label Grid.Row="1" Text="A1-A3 Produto" Style="{StaticResource Body}" />
+                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding Report.A1A3MinKgCO2PerM2, StringFormat='{0:N2}'}" Style="{StaticResource Body}" HorizontalTextAlignment="End" />
+                            <Label Grid.Row="1" Grid.Column="2" Text="{Binding Report.A1A3MaxKgCO2PerM2, StringFormat='{0:N2}'}" Style="{StaticResource Body}" HorizontalTextAlignment="End" />
+                            <Label Grid.Row="1" Grid.Column="3" Text="{Binding Report.A1A3Percent, StringFormat='{0:N1}%'}" Style="{StaticResource Body}" HorizontalTextAlignment="End" />
+
+                            <Label Grid.Row="2" Text="A4 Transporte" Style="{StaticResource Body}" />
+                            <Label Grid.Row="2" Grid.Column="1" Text="{Binding Report.A4KgCO2PerM2, StringFormat='{0:N2}'}" Style="{StaticResource Body}" HorizontalTextAlignment="End" />
+                            <Label Grid.Row="2" Grid.Column="2" Text="{Binding Report.A4KgCO2PerM2, StringFormat='{0:N2}'}" Style="{StaticResource Body}" HorizontalTextAlignment="End" />
+                            <Label Grid.Row="2" Grid.Column="3" Text="{Binding Report.A4Percent, StringFormat='{0:N1}%'}" Style="{StaticResource Body}" HorizontalTextAlignment="End" />
+
+                            <Label Grid.Row="3" Text="A5 Construção" Style="{StaticResource Body}" />
+                            <Label Grid.Row="3" Grid.Column="1" Text="{Binding Report.A5MinKgCO2PerM2, StringFormat='{0:N2}'}" Style="{StaticResource Body}" HorizontalTextAlignment="End" />
+                            <Label Grid.Row="3" Grid.Column="2" Text="{Binding Report.A5MaxKgCO2PerM2, StringFormat='{0:N2}'}" Style="{StaticResource Body}" HorizontalTextAlignment="End" />
+                            <Label Grid.Row="3" Grid.Column="3" Text="{Binding Report.A5Percent, StringFormat='{0:N1}%'}" Style="{StaticResource Body}" HorizontalTextAlignment="End" />
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}" Padding="8" IsVisible="{Binding LifecycleChart, Converter={StaticResource IsNotNullConverter}}">
+                        <controls:TrackedPlotView Model="{Binding LifecycleChart}" HeightRequest="336" />
+                    </Border>
+                </Grid>
+
+                <!-- Material Contribution — percentages + pie chart side by side -->
+                <Label Text="Contribuição por Material" Style="{StaticResource Title3}" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <Border Style="{StaticResource CardStyle}" Padding="16">
+                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12">
+                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                <Label Text="{Binding Report.ConcreteContributionPercent, StringFormat='{0:N1}%'}" Style="{StaticResource Title2}" FontFamily="Consolas" HorizontalTextAlignment="Center" />
+                                <Label Text="Concreto" Style="{StaticResource Caption1}" HorizontalTextAlignment="Center" Opacity="0.6" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="4" HorizontalOptions="Center">
+                                <Label Text="{Binding Report.SteelContributionPercent, StringFormat='{0:N1}%'}" Style="{StaticResource Title2}" FontFamily="Consolas" HorizontalTextAlignment="Center" />
+                                <Label Text="Aço" Style="{StaticResource Caption1}" HorizontalTextAlignment="Center" Opacity="0.6" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="2" Spacing="4" HorizontalOptions="Center">
+                                <Label Text="{Binding Report.FormworkContributionPercent, StringFormat='{0:N1}%'}" Style="{StaticResource Title2}" FontFamily="Consolas" HorizontalTextAlignment="Center" />
+                                <Label Text="Fôrma" Style="{StaticResource Caption1}" HorizontalTextAlignment="Center" Opacity="0.6" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="3" Spacing="4" HorizontalOptions="Center">
+                                <Label Text="{Binding Report.TransportContributionPercent, StringFormat='{0:N1}%'}" Style="{StaticResource Title2}" FontFamily="Consolas" HorizontalTextAlignment="Center" />
+                                <Label Text="Transporte" Style="{StaticResource Caption1}" HorizontalTextAlignment="Center" Opacity="0.6" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}" Padding="8" IsVisible="{Binding MaterialPieChart, Converter={StaticResource IsNotNullConverter}}">
+                        <controls:TrackedPlotView Model="{Binding MaterialPieChart}" HeightRequest="336" />
+                    </Border>
+                </Grid>
+
+                <!-- Indicators + Benchmark chart side by side -->
+                <Label Text="Indicadores de Consumo" Style="{StaticResource Title3}" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <Border Style="{StaticResource CardStyle}" Padding="16">
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="16">
+                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                <Label Text="{Binding Report.MaterialConsumptionKgPerM2, StringFormat='{0:N0}'}" Style="{StaticResource Title2}" FontFamily="Consolas" HorizontalTextAlignment="Center" />
+                                <Label Text="kg/m²" Style="{StaticResource Caption1}" HorizontalTextAlignment="Center" Opacity="0.6" />
+                                <Label Text="Consumo Material" Style="{StaticResource Caption2}" HorizontalTextAlignment="Center" Opacity="0.4" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="4" HorizontalOptions="Center">
+                                <Label Text="{Binding Report.AverageConcreteThicknessM, StringFormat='{0:N2}'}" Style="{StaticResource Title2}" FontFamily="Consolas" HorizontalTextAlignment="Center" />
+                                <Label Text="m" Style="{StaticResource Caption1}" HorizontalTextAlignment="Center" Opacity="0.6" />
+                                <Label Text="Espessura Média" Style="{StaticResource Caption2}" HorizontalTextAlignment="Center" Opacity="0.4" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="2" Spacing="4" HorizontalOptions="Center">
+                                <Label Text="{Binding Report.AverageSteelRate, StringFormat='{0:N1}'}" Style="{StaticResource Title2}" FontFamily="Consolas" HorizontalTextAlignment="Center" />
+                                <Label Text="kg/m³" Style="{StaticResource Caption1}" HorizontalTextAlignment="Center" Opacity="0.6" />
+                                <Label Text="Taxa Armadura" Style="{StaticResource Caption2}" HorizontalTextAlignment="Center" Opacity="0.4" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}" Padding="8" IsVisible="{Binding BenchmarkChart, Converter={StaticResource IsNotNullConverter}}">
+                        <controls:TrackedPlotView Model="{Binding BenchmarkChart}" HeightRequest="336" />
+                    </Border>
+                </Grid>
+
+                <!-- Floor Reports -->
+                <Label Text="Emissão por Pavimento" Style="{StaticResource Title3}" />
+                <CollectionView ItemsSource="{Binding Report.FloorReports}" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Label Text="Nenhum pavimento no relatório." Style="{StaticResource Caption1}" Opacity="0.5" />
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="reporting:FloorCO2Report">
+                            <Border Style="{StaticResource CardStyle}" Padding="16" Margin="0,3">
+                                <Grid ColumnDefinitions="2*,*,*,*" ColumnSpacing="8">
+                                    <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                        <Label Text="{Binding FloorName}" Style="{StaticResource Subtitle2}" />
+                                        <Label Style="{StaticResource Caption2}" Opacity="0.5">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding AreaM2, StringFormat='{0:N0}'}" />
+                                                    <Span Text=" m² x " />
+                                                    <Span Text="{Binding RepetitionCount}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="End" VerticalOptions="Center">
+                                        <Label Text="{Binding EmissionPerM2Min, StringFormat='{0:N1}'}" Style="{StaticResource Body}" HorizontalTextAlignment="End" TextColor="{StaticResource EmissionLow}" />
+                                        <Label Text="kgCO₂/m² mín" Style="{StaticResource Caption2}" HorizontalTextAlignment="End" Opacity="0.5" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="2" Spacing="2" HorizontalOptions="End" VerticalOptions="Center">
+                                        <Label Text="{Binding EmissionPerM2Max, StringFormat='{0:N1}'}" Style="{StaticResource Body}" HorizontalTextAlignment="End" TextColor="{StaticResource EmissionHigh}" />
+                                        <Label Text="kgCO₂/m² máx" Style="{StaticResource Caption2}" HorizontalTextAlignment="End" Opacity="0.5" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="3" Spacing="2" HorizontalOptions="End" VerticalOptions="Center">
+                                        <Label Text="{Binding TotalEmissionMax, StringFormat='{0:N0}'}" Style="{StaticResource Body}" HorizontalTextAlignment="End" />
+                                        <Label Text="kgCO₂ total" Style="{StaticResource Caption2}" HorizontalTextAlignment="End" Opacity="0.5" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <Border Style="{StaticResource CardStyle}" Padding="8" IsVisible="{Binding FloorEmissionChart, Converter={StaticResource IsNotNullConverter}}">
+                    <controls:TrackedPlotView Model="{Binding FloorEmissionChart}" HeightRequest="448" />
+                </Border>
+
+                <!-- Hotspots -->
+                <Label Text="Hotspots (Maiores Contribuintes)" Style="{StaticResource Title3}" />
+                <Border Style="{StaticResource CardStyle}" Padding="20">
+                    <CollectionView ItemsSource="{Binding Report.Hotspots}" SelectionMode="None">
+                        <CollectionView.EmptyView>
+                            <Label Text="Nenhum hotspot identificado." Style="{StaticResource Caption1}" Opacity="0.5" />
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="coreModels:HotspotItem">
+                                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12" Padding="0,6">
+                                    <Label Text="{Binding ItemName}" Style="{StaticResource Body}" VerticalOptions="Center" />
+                                    <Label Grid.Column="1" Text="{Binding EmissionKgCO2, StringFormat='{0:N1} kgCO₂'}" Style="{StaticResource Body}" VerticalOptions="Center" HorizontalTextAlignment="End" />
+                                    <Border Grid.Column="2" Padding="8,4" StrokeThickness="0" StrokeShape="RoundRectangle 4"
+                                            BackgroundColor="{StaticResource EmissionMedium}">
+                                        <Label Text="{Binding Percentage, StringFormat='{0:N1}%'}" Style="{StaticResource Caption1}" TextColor="{StaticResource Black}" />
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Border>
+
+                <Button Text="← Voltar ao Projeto" Clicked="OnBackClicked" Style="{StaticResource SecondaryAction}" HorizontalOptions="Start" Margin="0,8,0,20" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

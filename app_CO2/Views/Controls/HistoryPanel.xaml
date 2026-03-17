@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:app_CO2.ViewModels"
+             xmlns:models="clr-namespace:app_CO2.Models"
+             x:Class="app_CO2.Views.Controls.HistoryPanel"
+             x:DataType="vm:HistoryPanelViewModel">
+
+    <Border Style="{StaticResource CardStyle}" Padding="0">
+        <Grid RowDefinitions="Auto,*,Auto">
+
+            <!-- Header -->
+            <Grid ColumnDefinitions="*,Auto,Auto" Padding="16,12" BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
+                <Label Text="Histórico" Style="{StaticResource Subtitle2}"
+                       TextColor="{AppThemeBinding Light=White, Dark={StaticResource PrimaryDarkText}}"
+                       VerticalOptions="Center" />
+                <Button Grid.Column="1" Text="CSV" FontSize="11" Padding="8,4"
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light=White, Dark={StaticResource PrimaryDarkText}}"
+                        Command="{Binding ExportCsvCommand}"
+                        ToolTipProperties.Text="Copiar CSV para clipboard" />
+                <Button Grid.Column="2" Text="Limpar" FontSize="11" Padding="8,4"
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light=White, Dark={StaticResource PrimaryDarkText}}"
+                        Command="{Binding ClearAllCommand}" />
+            </Grid>
+
+            <!-- Items List -->
+            <CollectionView Grid.Row="1" ItemsSource="{Binding Items}" Margin="0,4">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="16">
+                        <Label Text="Nenhum cálculo ainda" Style="{StaticResource Caption1}" Opacity="0.5" HorizontalOptions="Center" />
+                        <Label Text="Faça um cálculo para adicionar ao histórico" Style="{StaticResource Caption2}" Opacity="0.4" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:HistoryItem">
+                        <SwipeView>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Remover" BackgroundColor="{StaticResource EmissionHigh}"
+                                               Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HistoryPanelViewModel}}, Path=RemoveItemCommand}"
+                                               CommandParameter="{Binding .}" />
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+                            <Border Padding="12,8" Margin="4,2" StrokeThickness="0"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource LightSecondaryBackground}, Dark={StaticResource DarkSecondaryBackground}}"
+                                    StrokeShape="RoundRectangle 6">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                    <CheckBox IsChecked="{Binding IsIncluded}" VerticalOptions="Center"
+                                              Color="{StaticResource Primary}" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                        <Label Style="{StaticResource Caption1}" FontAttributes="Bold">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding MaterialType}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label Text="{Binding Description}" Style="{StaticResource Caption2}" Opacity="0.7"
+                                               LineBreakMode="TailTruncation" MaxLines="1" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="2" Spacing="0" VerticalOptions="Center" HorizontalOptions="End">
+                                        <Label Style="{StaticResource Caption2}" HorizontalTextAlignment="End">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding EmissionMin, StringFormat='{0:N0}'}" />
+                                                    <Span Text=" - " />
+                                                    <Span Text="{Binding EmissionMax, StringFormat='{0:N0}'}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label Text="{Binding Unit}" Style="{StaticResource Caption2}" Opacity="0.5" HorizontalTextAlignment="End" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Total Footer -->
+            <Border Grid.Row="2" Padding="16,12" StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Tertiary}, Dark={StaticResource DarkSecondaryBackground}}">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Total (selecionados)" Style="{StaticResource Subtitle2}"
+                           TextColor="{AppThemeBinding Light=White, Dark={StaticResource LightOnDarkBackground}}"
+                           VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Column="1" HorizontalOptions="End">
+                        <Label Style="{StaticResource Subtitle1}" HorizontalTextAlignment="End"
+                               TextColor="{AppThemeBinding Light=White, Dark={StaticResource LightOnDarkBackground}}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding TotalMin, StringFormat='{0:N0}'}" />
+                                    <Span Text=" - " />
+                                    <Span Text="{Binding TotalMax, StringFormat='{0:N0}'}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Label Text="kgCO₂" Style="{StaticResource Caption2}" HorizontalTextAlignment="End"
+                               TextColor="{AppThemeBinding Light=White, Dark={StaticResource LightOnDarkBackground}}" Opacity="0.7" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Border>
+</ContentView>

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:app_CO2.ViewModels"
+             xmlns:models="clr-namespace:app_CO2.Models"
+             x:Class="app_CO2.Views.BuildingProjectPage"
+             x:DataType="vm:BuildingProjectViewModel"
+             Title="Edifício">
+
+    <Grid Padding="20" RowDefinitions="Auto,*,Auto" RowSpacing="12">
+
+        <!-- Row 0: Fixed Header -->
+        <VerticalStackLayout Spacing="4">
+            <Label Text="Edifício — Projeto de CO₂" Style="{StaticResource Title1}" />
+            <Label Text="Preencha todas as seções abaixo e calcule as emissões." Style="{StaticResource Body}" Opacity="0.7" />
+        </VerticalStackLayout>
+
+        <!-- Row 1: All content in a single scroll -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="16">
+
+                <!-- Section: Saved Projects -->
+                <Label Text="Projetos Salvos" Style="{StaticResource Title3}" />
+                <CollectionView ItemsSource="{Binding Projects}" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Label Text="Nenhum projeto salvo." Style="{StaticResource Caption1}" Opacity="0.5" Margin="0,4" />
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:BuildingProject">
+                            <Border Style="{StaticResource CardStyle}" Padding="12" Margin="0,2">
+                                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                                    <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                        <Label Text="{Binding Name}" Style="{StaticResource Subtitle2}" />
+                                        <Label Text="{Binding UpdatedAt, StringFormat='{0:dd/MM/yyyy HH:mm}'}" Style="{StaticResource Caption2}" Opacity="0.5" />
+                                    </VerticalStackLayout>
+                                    <Button Grid.Column="1" Text="Abrir" FontSize="12" Padding="10,4"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BuildingProjectViewModel}}, Path=LoadProjectCommand}"
+                                            CommandParameter="{Binding .}" Style="{StaticResource PrimaryAction}" />
+                                    <Button Grid.Column="2" Text="Excluir" FontSize="12" Padding="10,4"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BuildingProjectViewModel}}, Path=DeleteProjectCommand}"
+                                            CommandParameter="{Binding .}" Style="{StaticResource SecondaryAction}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Section: Project Info -->
+                <Label Text="Informações do Projeto" Style="{StaticResource Title2}" />
+                <Border Style="{StaticResource CardStyle}" Padding="20">
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="16">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Nome do Edifício" Style="{StaticResource Subtitle2}" />
+                            <Entry Text="{Binding CurrentProject.Name}" Placeholder="Ex: Edifício Residencial A" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                            <Label Text="Descrição" Style="{StaticResource Subtitle2}" />
+                            <Entry Text="{Binding CurrentProject.Description}" Placeholder="Descrição opcional" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2" Spacing="4">
+                            <Label Text="Vida Útil (anos)" Style="{StaticResource Subtitle2}" />
+                            <Entry Text="{Binding CurrentProject.ReferenceServiceLifeYears}" Keyboard="Numeric" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- Section: Floors -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Pavimentos" Style="{StaticResource Title2}" VerticalOptions="Center" />
+                    <Button Grid.Column="1" Text="+ Pavimento" Command="{Binding AddFloorCommand}" Style="{StaticResource PrimaryAction}" />
+                </Grid>
+
+                <CollectionView ItemsSource="{Binding Floors}" SelectionMode="Single" SelectedItem="{Binding SelectedFloor}">
+                    <CollectionView.EmptyView>
+                        <Label Text="Adicione ao menos um pavimento." Style="{StaticResource Caption1}" Opacity="0.5" />
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:BuildingFloorViewModel">
+                            <Border Style="{StaticResource CardStyle}" Padding="16" Margin="0,4">
+                                <VerticalStackLayout Spacing="10">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                        <Entry Text="{Binding Name}" Placeholder="Nome do pavimento" FontAttributes="Bold" />
+                                        <Button Grid.Column="1" Text="Remover" FontSize="11" Padding="8,4"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BuildingProjectViewModel}}, Path=RemoveFloorCommand}"
+                                                CommandParameter="{Binding .}" BackgroundColor="{StaticResource EmissionHigh}" TextColor="White" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label Text="Tipo" Style="{StaticResource Caption2}" />
+                                            <Picker ItemsSource="{Binding FloorTypes}" SelectedItem="{Binding FloorType}" />
+                                        </VerticalStackLayout>
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                            <Label Text="Altura (m)" Style="{StaticResource Caption2}" />
+                                            <Entry Text="{Binding FloorHeight}" Keyboard="Numeric" />
+                                        </VerticalStackLayout>
+                                        <VerticalStackLayout Grid.Column="2" Spacing="2">
+                                            <Label Text="Área (m²)" Style="{StaticResource Caption2}" />
+                                            <Entry Text="{Binding FloorArea}" Keyboard="Numeric" />
+                                        </VerticalStackLayout>
+                                        <VerticalStackLayout Grid.Column="3" Spacing="2">
+                                            <Label Text="Repetições" Style="{StaticResource Caption2}" />
+                                            <Entry Text="{Binding RepetitionCount}" Keyboard="Numeric" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+
+                                    <!-- Elements in this floor -->
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="Elementos Estruturais" Style="{StaticResource Subtitle2}" VerticalOptions="Center" />
+                                        <Button Grid.Column="1" Text="+ Elemento" FontSize="11" Padding="8,4"
+                                                Command="{Binding AddElementCommand}" Style="{StaticResource PrimaryAction}" />
+                                    </Grid>
+                                    <CollectionView ItemsSource="{Binding Elements}">
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:BuildingElementViewModel">
+                                                <Border Padding="10" Margin="0,2" StrokeThickness="1"
+                                                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                                                        StrokeShape="RoundRectangle 8" BackgroundColor="Transparent">
+                                                    <VerticalStackLayout Spacing="6">
+                                                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
+                                                            <Entry Text="{Binding Name}" Placeholder="Nome" />
+                                                            <Picker Grid.Column="1" ItemsSource="{Binding ElementTypes}" SelectedItem="{Binding ElementType}" WidthRequest="140" />
+                                                            <Button Grid.Column="2" Text="X" FontSize="11" Padding="6,2" WidthRequest="30"
+                                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BuildingFloorViewModel}}, Path=RemoveElementCommand}"
+                                                                    CommandParameter="{Binding .}" BackgroundColor="{StaticResource EmissionHigh}" TextColor="White" />
+                                                        </Grid>
+                                                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="6">
+                                                            <VerticalStackLayout Spacing="2">
+                                                                <Label Text="Vol. Concreto (m³)" Style="{StaticResource Caption2}" />
+                                                                <Entry Text="{Binding ConcreteVolume}" Keyboard="Numeric" />
+                                                            </VerticalStackLayout>
+                                                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                                                <Label Text="Classe" Style="{StaticResource Caption2}" />
+                                                                <Picker ItemsSource="{Binding ConcreteGrades}" SelectedItem="{Binding ConcreteGrade}" />
+                                                            </VerticalStackLayout>
+                                                            <VerticalStackLayout Grid.Column="2" Spacing="2">
+                                                                <Label Text="Massa Aço (kg)" Style="{StaticResource Caption2}" />
+                                                                <Entry Text="{Binding SteelMass}" Keyboard="Numeric" />
+                                                            </VerticalStackLayout>
+                                                        </Grid>
+                                                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="6">
+                                                            <VerticalStackLayout Spacing="2">
+                                                                <Label Text="Área Fôrma (m²)" Style="{StaticResource Caption2}" />
+                                                                <Entry Text="{Binding FormworkArea}" Keyboard="Numeric" />
+                                                            </VerticalStackLayout>
+                                                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                                                <Label Text="Material Fôrma" Style="{StaticResource Caption2}" />
+                                                                <Picker ItemsSource="{Binding FormworkMaterials}" SelectedItem="{Binding FormworkMaterial}" />
+                                                            </VerticalStackLayout>
+                                                            <VerticalStackLayout Grid.Column="2" Spacing="2">
+                                                                <Label Text="Reutilizações" Style="{StaticResource Caption2}" />
+                                                                <Entry Text="{Binding FormworkReuses}" Keyboard="Numeric" />
+                                                            </VerticalStackLayout>
+                                                        </Grid>
+                                                    </VerticalStackLayout>
+                                                </Border>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Section: Transport -->
+                <Label Text="Configuração de Transporte" Style="{StaticResource Title2}" />
+                <Border Style="{StaticResource CardStyle}" Padding="20">
+                    <VerticalStackLayout Spacing="14">
+                        <Label Text="Distâncias de transporte dos materiais até a obra" Style="{StaticResource Body}" Opacity="0.7" />
+                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="16">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Concreto (km)" Style="{StaticResource Subtitle2}" />
+                                <Entry Text="{Binding CurrentProject.Transport.ConcreteDistanceKm}" Keyboard="Numeric" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                <Label Text="Aço (km)" Style="{StaticResource Subtitle2}" />
+                                <Entry Text="{Binding CurrentProject.Transport.SteelDistanceKm}" Keyboard="Numeric" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="2" Spacing="4">
+                                <Label Text="Fôrmas (km)" Style="{StaticResource Subtitle2}" />
+                                <Entry Text="{Binding CurrentProject.Transport.FormworkDistanceKm}" Keyboard="Numeric" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="3" Spacing="4">
+                                <Label Text="Resíduos (km)" Style="{StaticResource Subtitle2}" />
+                                <Entry Text="{Binding CurrentProject.Transport.WasteDistanceKm}" Keyboard="Numeric" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Section: Construction A5 -->
+                <Label Text="Configuração de Construção (A5)" Style="{StaticResource Title3}" />
+                <Border Style="{StaticResource CardStyle}" Padding="20">
+                    <VerticalStackLayout Spacing="14">
+                        <Label Text="Parâmetros de perdas e consumo na construção" Style="{StaticResource Body}" Opacity="0.7" />
+                        <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="16">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Perda Concreto (%)" Style="{StaticResource Subtitle2}" />
+                                <Entry Text="{Binding CurrentProject.Construction.ConcreteLossPercent}" Keyboard="Numeric" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                <Label Text="Perda Aço (%)" Style="{StaticResource Subtitle2}" />
+                                <Entry Text="{Binding CurrentProject.Construction.SteelLossPercent}" Keyboard="Numeric" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="2" Spacing="4">
+                                <Label Text="Perda Fôrma (%)" Style="{StaticResource Subtitle2}" />
+                                <Entry Text="{Binding CurrentProject.Construction.FormworkLossPercent}" Keyboard="Numeric" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="3" Spacing="4">
+                                <Label Text="Diesel (L/m³ concreto)" Style="{StaticResource Subtitle2}" />
+                                <Entry Text="{Binding CurrentProject.Construction.DieselConsumptionLPerM3}" Keyboard="Numeric" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Row 2: Fixed Footer — always visible -->
+        <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+            <Button Text="Salvar Projeto" Command="{Binding SaveProjectCommand}" Style="{StaticResource SecondaryAction}" />
+            <Button Grid.Column="2" Text="Calcular Emissões de CO₂" Command="{Binding CalculateCommand}"
+                    Style="{StaticResource PrimaryAction}" FontSize="16" Padding="20,12" />
+        </Grid>
+
+    </Grid>
+</ContentPage>

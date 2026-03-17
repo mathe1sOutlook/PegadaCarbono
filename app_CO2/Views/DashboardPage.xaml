@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:app_CO2.ViewModels"
+             xmlns:controls="clr-namespace:app_CO2.Views.Controls"
+             xmlns:oxy="clr-namespace:OxyPlot.Maui.Skia;assembly=OxyPlot.Maui.Skia"
+             x:Class="app_CO2.Views.DashboardPage"
+             x:DataType="vm:DashboardViewModel"
+             Title="Dashboard">
+
+    <Grid ColumnDefinitions="7*,3*" ColumnSpacing="16" Padding="20">
+
+        <ScrollView Grid.Column="0">
+            <VerticalStackLayout Spacing="12">
+
+                <Label Text="CO₂ Calculator" Style="{StaticResource Title1}" />
+                <Label Text="Calculadora de emissões de CO₂ para estruturas de concreto armado" Style="{StaticResource Body}" Opacity="0.7" Margin="0,0,0,2" />
+
+                <!-- Quick Access Cards — single row, 5 cols -->
+                <Label Text="Acesso Rápido" Style="{StaticResource Title3}" Margin="0,4,0,0" />
+                <Grid ColumnDefinitions="*,*,*,*,*" ColumnSpacing="10">
+                    <Border Style="{StaticResource CardStyle}" Padding="14">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Image Source="{StaticResource IconConcrete}" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="Concreto" Style="{StaticResource Subtitle2}" />
+                                <Label Text="C20-C50, m³" Style="{StaticResource Caption2}" Opacity="0.6" />
+                            </VerticalStackLayout>
+                        </Grid>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnConcreteCardTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}" Padding="14">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Image Source="{StaticResource IconSteel}" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="Aço" Style="{StaticResource Subtitle2}" />
+                                <Label Text="CA-50/60, kg" Style="{StaticResource Caption2}" Opacity="0.6" />
+                            </VerticalStackLayout>
+                        </Grid>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnSteelCardTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Border Grid.Column="2" Style="{StaticResource CardStyle}" Padding="14">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Image Source="{StaticResource IconFormwork}" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="Fôrmas" Style="{StaticResource Subtitle2}" />
+                                <Label Text="Material, m²" Style="{StaticResource Caption2}" Opacity="0.6" />
+                            </VerticalStackLayout>
+                        </Grid>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnFormworkCardTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Border Grid.Column="3" Style="{StaticResource CardStyle}" Padding="14">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Image Source="{StaticResource IconTransport}" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="Transporte" Style="{StaticResource Subtitle2}" />
+                                <Label Text="Modo, kg·km" Style="{StaticResource Caption2}" Opacity="0.6" />
+                            </VerticalStackLayout>
+                        </Grid>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnTransportCardTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Border Grid.Column="4" Style="{StaticResource CardStyle}" Padding="14">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Image Source="{StaticResource IconBuilding}" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="Edifício" Style="{StaticResource Subtitle2}" />
+                                <Label Text="Projeto completo" Style="{StaticResource Caption2}" Opacity="0.6" />
+                            </VerticalStackLayout>
+                        </Grid>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnBuildingCardTapped" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </Grid>
+
+                <!-- Section: Concreto Armado -->
+                <Label Text="Concreto Armado" Style="{StaticResource Title3}" Margin="0,8,0,0" />
+
+                <Border Style="{StaticResource CardStyle}" Padding="8">
+                    <controls:TrackedPlotView Model="{Binding ConcreteGradeChart}" HeightRequest="420" />
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}" Padding="8">
+                    <controls:TrackedPlotView Model="{Binding SensitivityChart}" HeightRequest="390" />
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}" Padding="8">
+                    <controls:TrackedPlotView Model="{Binding FormworkComparisonChart}" HeightRequest="336" />
+                </Border>
+
+                <!-- Section: Transporte e Logística -->
+                <Label Text="Transporte e Logística" Style="{StaticResource Title3}" Margin="0,8,0,0" />
+
+                <Border Style="{StaticResource CardStyle}" Padding="8">
+                    <controls:TrackedPlotView Model="{Binding TransportModeChart}" HeightRequest="364" />
+                </Border>
+
+                <!-- Section: Combustíveis e Energia -->
+                <Label Text="Combustíveis e Energia" Style="{StaticResource Title3}" Margin="0,8,0,0" />
+
+                <Border Style="{StaticResource CardStyle}" Padding="8">
+                    <controls:TrackedPlotView Model="{Binding FuelComparisonChart}" HeightRequest="560" />
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}" Padding="8">
+                    <controls:TrackedPlotView Model="{Binding ElectricityContextChart}" HeightRequest="364" />
+                </Border>
+
+                <!-- Section: Matérias-Primas (Carbonatos) -->
+                <Label Text="Matérias-Primas — Carbonatos" Style="{StaticResource Title3}" Margin="0,8,0,0" />
+
+                <Border Style="{StaticResource CardStyle}" Padding="8">
+                    <controls:TrackedPlotView Model="{Binding CarbonateComparisonChart}" HeightRequest="420" />
+                </Border>
+
+                <!-- Method Info -->
+                <Border Style="{StaticResource CardStyle}" Padding="14">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Label Text="CT 101" Style="{StaticResource Subtitle2}" TextColor="{StaticResource Primary}" VerticalOptions="Center" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                            <Label Text="IBRACON/ABECE/ABCIC, 2024 — 58 equações para quantificação de emissões de CO₂" Style="{StaticResource Caption1}" Opacity="0.6" />
+                            <Label Text="Estágios: A1-A3 (Produto) | A4 (Transporte) | A5 (Construção)" Style="{StaticResource Caption2}" Opacity="0.5" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Right: History Panel -->
+        <controls:HistoryPanel Grid.Column="1" BindingContext="{Binding HistoryPanel}" />
+
+    </Grid>
+</ContentPage>

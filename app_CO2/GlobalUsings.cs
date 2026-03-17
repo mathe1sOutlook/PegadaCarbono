@@ -1,0 +1,14 @@
+global using System.Collections.ObjectModel;
+global using System.Text.Json;
+global using System.Text.Json.Serialization;
+global using CommunityToolkit.Mvvm.ComponentModel;
+global using CommunityToolkit.Mvvm.Input;
+global using CommunityToolkit.Mvvm.Messaging;
+global using CoreCO2.Abstractions;
+global using CoreCO2.Building;
+global using CoreCO2.Building.Elements;
+global using CoreCO2.Data;
+global using CoreCO2.Materials;
+global using CoreCO2.Models;
+global using CoreCO2.Reporting;
+global using Fonts;

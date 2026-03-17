@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="app_CO2.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
+    xmlns:views="clr-namespace:app_CO2.Views"
+    Shell.FlyoutBehavior="Flyout"
+    Title="CO2 Calculator">
+
+    <FlyoutItem Title="Dashboard" Icon="{StaticResource IconDashboard}">
+        <ShellContent ContentTemplate="{DataTemplate views:DashboardPage}" Route="dashboard" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Calculadoras" Icon="{StaticResource IconConcrete}">
+        <ShellContent ContentTemplate="{DataTemplate views:UnifiedCalculatorPage}" Route="calculators" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Edificio" Icon="{StaticResource IconBuilding}">
+        <ShellContent ContentTemplate="{DataTemplate views:BuildingProjectPage}" Route="building" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Tabelas" Icon="{StaticResource IconTables}" FlyoutDisplayOptions="AsMultipleItems">
+        <Tab Title="Combustiveis">
+            <ShellContent ContentTemplate="{DataTemplate views:FuelTablePage}" Route="fuel-table" />
+        </Tab>
+        <Tab Title="Carbonatos">
+            <ShellContent ContentTemplate="{DataTemplate views:CarbonateTablePage}" Route="carbonate-table" />
+        </Tab>
+        <Tab Title="Transporte">
+            <ShellContent ContentTemplate="{DataTemplate views:TransportTablePage}" Route="transport-table" />
+        </Tab>
+        <Tab Title="Materiais">
+            <ShellContent ContentTemplate="{DataTemplate views:MaterialTablePage}" Route="material-table" />
+        </Tab>
+    </FlyoutItem>
+
+    <FlyoutItem Title="Sobre / CT 101" Icon="{StaticResource IconAbout}">
+        <ShellContent ContentTemplate="{DataTemplate views:AboutPage}" Route="about" />
+    </FlyoutItem>
+
+    <Shell.FlyoutFooter>
+        <Grid Padding="15">
+            <sf:SfSegmentedControl x:Name="ThemeSegmentedControl"
+                VerticalOptions="Center" HorizontalOptions="Center" SelectionChanged="SfSegmentedControl_SelectionChanged"
+                SegmentWidth="40" SegmentHeight="40">
+                <sf:SfSegmentedControl.ItemsSource>
+                    <x:Array Type="{x:Type sf:SfSegmentItem}">
+                        <sf:SfSegmentItem ImageSource="{StaticResource IconLight}"/>
+                        <sf:SfSegmentItem ImageSource="{StaticResource IconDark}"/>
+                    </x:Array>
+                </sf:SfSegmentedControl.ItemsSource>
+            </sf:SfSegmentedControl>
+        </Grid>
+    </Shell.FlyoutFooter>
+
+</Shell>

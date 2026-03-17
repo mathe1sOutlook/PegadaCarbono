@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:app_CO2.ViewModels"
+             xmlns:dg="clr-namespace:mMauiLib.Controls.DataGrid;assembly=mMauiLib"
+             xmlns:dgc="clr-namespace:mMauiLib.Controls.DataGrid.Columns;assembly=mMauiLib"
+             xmlns:dgm="clr-namespace:mMauiLib.Controls.DataGrid.Models;assembly=mMauiLib"
+             xmlns:sel="clr-namespace:app_CO2.Views.Selectors"
+             x:Class="app_CO2.Views.CarbonateTablePage"
+             x:DataType="vm:CarbonateTableViewModel"
+             Title="Carbonatos">
+
+    <ContentPage.Resources>
+        <sel:OverrideRowStyleSelector x:Key="OverrideStyleSelector" />
+    </ContentPage.Resources>
+
+    <Grid Padding="20">
+        <ScrollView>
+            <VerticalStackLayout Spacing="10">
+
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Tabela de Carbonatos" Style="{StaticResource Title2}" />
+                        <Label Text="Fatores de emissão de CO₂ para calcinação de carbonatos (CT 101, Tabela 3)." Style="{StaticResource Caption1}" Opacity="0.7" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1" Text="Restaurar Todos os Padrões" Command="{Binding RestoreAllDefaultsCommand}"
+                            IsVisible="{Binding HasAnyOverride}" Style="{StaticResource SecondaryAction}" VerticalOptions="Center" />
+                </Grid>
+
+                <Border Style="{StaticResource CardStyle}" Padding="0">
+                    <dg:MauiDataGrid x:Name="DataGrid"
+                                     ItemsSource="{Binding Rows}"
+                                     RowStyleSelector="{StaticResource OverrideStyleSelector}"
+                                     HeaderBackground="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                                     HeaderTextColor="{AppThemeBinding Light=White, Dark={StaticResource PrimaryDarkText}}"
+                                     RowHeight="42" HeaderHeight="44" GridFontSize="14"
+                                     CellEditEnding="OnCellEditEnding">
+                        <dg:MauiDataGrid.Columns>
+                            <dgc:DataGridTextColumn Header="Carbonato" PropertyName="Name" IsReadOnly="True" Width="2*" />
+                            <dgc:DataGridTextColumn Header="Fator Mín" PropertyName="Min" Width="*" TextAlignment="End" />
+                            <dgc:DataGridTextColumn Header="Fator Máx" PropertyName="Max" Width="*" TextAlignment="End" />
+                            <dgc:DataGridTextColumn Header="Unidade" PropertyName="Unit" IsReadOnly="True" Width="Auto" TextAlignment="End" />
+                            <dgc:DataGridTemplateColumn Header="" PropertyName="IsOverridden" IsReadOnly="True" Width="40" IsSortable="False" IsResizable="False">
+                                <dgc:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate x:DataType="dgm:CellContext">
+                                        <Button Text="↺" FontSize="16" Padding="4,0"
+                                                WidthRequest="32" HeightRequest="32"
+                                                BackgroundColor="Transparent" TextColor="{StaticResource Primary}"
+                                                IsVisible="{Binding RowItem.IsOverridden}"
+                                                Clicked="OnRestoreClicked" />
+                                    </DataTemplate>
+                                </dgc:DataGridTemplateColumn.CellTemplate>
+                            </dgc:DataGridTemplateColumn>
+                        </dg:MauiDataGrid.Columns>
+                    </dg:MauiDataGrid>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="app_CO2.Views.Controls.EmissionResultCard">
+
+    <VerticalStackLayout Spacing="2" IsVisible="{Binding HasResult}" VerticalOptions="Center">
+        <Grid ColumnDefinitions="*,*" ColumnSpacing="8" RowDefinitions="Auto,Auto" RowSpacing="0">
+            <Label Text="Mín" Style="{StaticResource Caption2}" Opacity="0.5" />
+            <Label Grid.Column="1" Text="Máx" Style="{StaticResource Caption2}" Opacity="0.5" />
+            <Label Grid.Row="1" FontFamily="Consolas" FontSize="16" TextColor="{StaticResource EmissionLow}">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="{Binding ResultMin, StringFormat='{0:N2}'}" />
+                        <Span Text=" kgCO₂" FontSize="11" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+            <Label Grid.Row="1" Grid.Column="1" FontFamily="Consolas" FontSize="16" TextColor="{StaticResource EmissionHigh}">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="{Binding ResultMax, StringFormat='{0:N2}'}" />
+                        <Span Text=" kgCO₂" FontSize="11" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+        </Grid>
+    </VerticalStackLayout>
+</ContentView>

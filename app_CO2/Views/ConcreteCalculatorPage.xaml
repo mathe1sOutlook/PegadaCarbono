@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:app_CO2.ViewModels"
+             xmlns:controls="clr-namespace:app_CO2.Views.Controls"
+             x:Class="app_CO2.Views.ConcreteCalculatorPage"
+             x:DataType="vm:ConcreteCalculatorViewModel"
+             xmlns:converters="clr-namespace:app_CO2.Converters"
+             Title="Concreto">
+
+    <ContentPage.Resources>
+        <converters:EnumToStringConverter x:Key="EnumToString" />
+    </ContentPage.Resources>
+
+    <Grid ColumnDefinitions="7*,3*" ColumnSpacing="16" Padding="20">
+
+        <!-- Left: Calculator Form -->
+        <ScrollView Grid.Column="0">
+            <VerticalStackLayout Spacing="16">
+
+                <Label Text="Calculadora de Concreto" Style="{StaticResource Title1}" />
+                <Label Text="Calcula a emissão de CO₂ do concreto com base na classe de resistência e volume." Style="{StaticResource Body}" Opacity="0.7" />
+
+                <Border Style="{StaticResource CardStyle}" Padding="20">
+                    <VerticalStackLayout Spacing="16">
+                        <Label Text="Classe do Concreto" Style="{StaticResource Subtitle2}" />
+                        <Picker ItemsSource="{Binding Grades}" SelectedItem="{Binding SelectedGrade}" Title="Selecione a classe"
+                                ItemDisplayBinding="{Binding ., Converter={StaticResource EnumToString}}" />
+
+                        <Label Text="Volume (m³)" Style="{StaticResource Subtitle2}" />
+                        <Entry Text="{Binding Volume}" Keyboard="Numeric" Placeholder="Ex: 10.5" />
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                            <Button Text="Calcular" Command="{Binding CalculateCommand}" Style="{StaticResource PrimaryAction}" />
+                            <Button Grid.Column="1" Text="Limpar" Command="{Binding ClearCommand}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                                    TextColor="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <controls:EmissionResultCard BindingContext="{Binding .}" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Right: History Panel -->
+        <controls:HistoryPanel Grid.Column="1" BindingContext="{Binding HistoryPanel}" />
+
+    </Grid>
+</ContentPage>

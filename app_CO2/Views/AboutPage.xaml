@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:app_CO2.ViewModels"
+             x:Class="app_CO2.Views.AboutPage"
+             x:DataType="vm:AboutViewModel"
+             Title="Sobre / CT 101">
+
+    <Grid Padding="20">
+        <ScrollView>
+            <VerticalStackLayout Spacing="20">
+
+                <Label Text="Sobre o CO₂ Calculator" Style="{StaticResource Title1}" />
+
+                <Border Style="{StaticResource CardStyle}" Padding="24">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="{Binding AppName}" Style="{StaticResource Title2}" />
+                        <Label Text="{Binding Description}" Style="{StaticResource Body}" />
+                        <BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" />
+                        <Label Text="Método de Cálculo" Style="{StaticResource Subtitle1}" />
+                        <Label Text="{Binding Method}" Style="{StaticResource Body}" />
+                        <Label Text="{Binding Reference}" Style="{StaticResource Caption1}" Opacity="0.7" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Estágios do Ciclo de Vida" Style="{StaticResource Title3}" />
+                <Border Style="{StaticResource CardStyle}" Padding="20">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Style="{StaticResource Body}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="A1-A3 " FontAttributes="Bold" />
+                                    <Span Text="— Estágio de Produto (~91% do total): extração de matérias-primas, transporte até a fábrica, fabricação." />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Label Style="{StaticResource Body}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="A4 " FontAttributes="Bold" />
+                                    <Span Text="— Transporte até a obra (~1%): betoneira, carretas, caminhões." />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Label Style="{StaticResource Body}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="A5 " FontAttributes="Bold" />
+                                    <Span Text="— Construção (~8%): perdas de material, consumo de diesel, energia elétrica." />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Benchmarks CT 101" Style="{StaticResource Title3}" />
+                <Border Style="{StaticResource CardStyle}" Padding="20">
+                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="16" RowSpacing="8">
+                        <Label Text="Indicador" Style="{StaticResource Subtitle2}" />
+                        <Label Grid.Column="1" Text="Valor" Style="{StaticResource Subtitle2}" HorizontalTextAlignment="End" />
+                        <Label Grid.Column="2" Text="Unidade" Style="{StaticResource Subtitle2}" HorizontalTextAlignment="End" />
+
+                        <Label Grid.Row="1" Text="Emissão total" Style="{StaticResource Body}" />
+                        <Label Grid.Row="1" Grid.Column="1" Text="70 – 111" Style="{StaticResource Body}" HorizontalTextAlignment="End" />
+                        <Label Grid.Row="1" Grid.Column="2" Text="kgCO₂/m²" Style="{StaticResource Caption1}" HorizontalTextAlignment="End" Opacity="0.6" />
+
+                        <Label Grid.Row="2" Text="Consumo de material" Style="{StaticResource Body}" />
+                        <Label Grid.Row="2" Grid.Column="1" Text="~591" Style="{StaticResource Body}" HorizontalTextAlignment="End" />
+                        <Label Grid.Row="2" Grid.Column="2" Text="kg/m²" Style="{StaticResource Caption1}" HorizontalTextAlignment="End" Opacity="0.6" />
+                    </Grid>
+                </Border>
+
+                <Label Text="{Binding Version, StringFormat='Versão {0}'}" Style="{StaticResource Caption1}" Opacity="0.5" Margin="0,8,0,0" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
